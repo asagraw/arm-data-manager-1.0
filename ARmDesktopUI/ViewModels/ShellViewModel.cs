@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Caliburn.Micro;
 
 namespace ARmDesktopUI.ViewModels
 {
-    public class ShellViewModel
+    public class ShellViewModel : Conductor<Object>
     {
-        private ICalculations _calculations;
+        private LoginViewModel _loginVM;
 
-        public ShellViewModel(ICalculations calculations)
+        public ShellViewModel(LoginViewModel loginVM)
         {
-            _calculations = calculations;
+            _loginVM = loginVM;
+            ActivateItem(loginVM);
         }
     }
 }

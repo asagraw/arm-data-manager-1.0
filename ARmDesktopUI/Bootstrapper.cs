@@ -1,4 +1,5 @@
-﻿using ARmDesktopUI.ViewModels;
+﻿using ARmDesktopUI.Helpers;
+using ARmDesktopUI.ViewModels;
 using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace ARmDesktopUI
 {
@@ -16,6 +18,11 @@ namespace ARmDesktopUI
         public Bootstrapper()
         {
             Initialize();
+
+            ConventionManager.AddElementConvention<PasswordBox>(
+                PasswordBoxHelper.BoundPasswordProperty,
+                "Password",
+                "PasswordChanged");
         }
 
         protected override void Configure()
@@ -24,7 +31,8 @@ namespace ARmDesktopUI
 
             _container
                 .Singleton<IWindowManager, WindowManager>()
-                .Singleton<IEventAggregator, EventAggregator>();
+                .Singleton<IEventAggregator, EventAggregator>()
+                .Singleton<IAPIHelper, APIHelper>();
             _container
                 .PerRequest<ICalculations, Calculations>();
             GetType().Assembly.GetTypes()
