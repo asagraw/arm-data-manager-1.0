@@ -1,4 +1,4 @@
-﻿using ARmDesktopUI.Helpers;
+﻿using ARMDesktopUI.Library.Api;
 using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
@@ -41,6 +41,36 @@ namespace ARmDesktopUI.ViewModels
             }
         }
 
+        public  bool IsErrorVisible
+        {
+            get 
+            {
+                bool output = false;
+                if (ErrorMessage?.Length > 0)
+                {
+                    output = true;
+                }
+
+                return output; 
+            }
+        }
+
+        private string _errorMessage;
+
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            set 
+            {   
+                _errorMessage = value;
+                NotifyOfPropertyChange(() => IsErrorVisible);
+                NotifyOfPropertyChange(() => ErrorMessage);
+                 
+            }
+        }
+
+
+
         public bool CanLogIn
         {
             get
@@ -59,14 +89,18 @@ namespace ARmDesktopUI.ViewModels
         {
             try
             {
+                ErrorMessage = String.Empty;
                 var result = await _apiHelper.Authenticate(UserName, Password);
+
+                //Capture more information about user
+                await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                Console.WriteLine("Login failed");
+                ErrorMessage = ex.Message;
             }
-            Console.WriteLine("Login Success");
+            //Console.WriteLine("Login Success");
         }
 
     }

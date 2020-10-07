@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using ARMDesktopUI.Library;
+using ARMDesktopUI.Library.Api;
 
 namespace ARmDesktopUI
 {
@@ -32,7 +34,8 @@ namespace ARmDesktopUI
             _container
                 .Singleton<IWindowManager, WindowManager>()
                 .Singleton<IEventAggregator, EventAggregator>()
-                .Singleton<IAPIHelper, APIHelper>();
+                .Singleton<IAPIHelper, APIHelper>()
+                .Singleton<ILoggedInUserModel, LoggedInUserModel>();
             _container
                 .PerRequest<ICalculations, Calculations>();
             GetType().Assembly.GetTypes()
