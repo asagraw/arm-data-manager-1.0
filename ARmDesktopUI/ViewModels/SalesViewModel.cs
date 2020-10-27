@@ -1,4 +1,5 @@
 ﻿using ARMDesktopUI.Library.Api;
+using ARMDesktopUI.Library.Helper;
 using ARMDesktopUI.Library.Models;
 using Caliburn.Micro;
 using System;
@@ -13,10 +14,12 @@ namespace ARmDesktopUI.ViewModels
     public class SalesViewModel : Screen
     {
         IProductEndpoint _productEndpoint;
+        IConfigHelper _configHelper;
 
-        public SalesViewModel(IProductEndpoint productEndpoint)
+        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper)
         {
             _productEndpoint = productEndpoint;
+            _configHelper = configHelper;
         }
 
         protected override async void OnViewLoaded(object view)
@@ -85,22 +88,44 @@ namespace ARmDesktopUI.ViewModels
         {
             get 
             {
-                decimal subTotal = 0;
+                
+                return CalculateSubTotal().ToString("C");
+            }
+        }
 
-                foreach (var item in Cart)
+        private decimal CalculateSubTotal()
+        {
+            decimal subTotal = 0;
+
+            foreach (var item in Cart)
+            {
+                subTotal += (item.Product.RetailPrice * item.QuantityInCart);
+            }
+            return subTotal;
+        }
+
+        private decimal CalculateTax()
+        {
+            decimal taxAmount = 0;
+            decimal taxRate = _configHelper.GetTaxRate()/100;
+
+            foreach (var item in Cart)
+            {
+                if (item.Product.IsTaxable)
                 {
-                    subTotal += (item.Product.RetailPrice * item.QuantityInCart);
+                    taxAmount += (item.Product.RetailPrice * item.QuantityInCart * taxRate);
                 }
 
-                return subTotal.ToString("C");
             }
+            return taxAmount;
         }
 
         public string Tax
         {
             get
             {
-                return "$0.00";
+                
+                return CalculateTax().ToString("C");
             }
         }
 
@@ -108,7 +133,8 @@ namespace ARmDesktopUI.ViewModels
         {
             get
             {
-                return "$0.00";
+                decimal total = CalculateTax() + CalculateSubTotal();
+                return total.ToString("C");
             }
         }
 
@@ -148,8 +174,10 @@ namespace ARmDesktopUI.ViewModels
                 Cart.Add(item);
             }
             SelectedProduct.QuantityInStock -= ItemQuantity;
-            NotifyOfPropertyChange(() => SubTotal);
             NotifyOfPropertyChange(() => Cart);
+            NotifyOfPropertyChange(() => SubTotal);
+            NotifyOfPropertyChange(() => Tax);
+            NotifyOfPropertyChange(() => Total);
             ItemQuantity = 1;
         }
 

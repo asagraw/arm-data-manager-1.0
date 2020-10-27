@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ARMDesktopUI.Library;
 using ARMDesktopUI.Library.Api;
+using ARMDesktopUI.Library.Helper;
 
 namespace ARmDesktopUI
 {
@@ -36,6 +37,7 @@ namespace ARmDesktopUI
                 .Singleton<IWindowManager, WindowManager>()
                 .Singleton<IEventAggregator, EventAggregator>()
                 .Singleton<IAPIHelper, APIHelper>()
+                .Singleton<IConfigHelper, ConfigHelper>()
                 .Singleton<ILoggedInUserModel, LoggedInUserModel>();
             _container
                 .PerRequest<ICalculations, Calculations>();
