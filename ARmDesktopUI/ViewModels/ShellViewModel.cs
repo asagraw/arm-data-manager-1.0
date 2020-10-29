@@ -13,24 +13,21 @@ namespace ARmDesktopUI.ViewModels
         private LoginViewModel _loginVM;
         private IEventAggregator _events;
         private SalesViewModel _salesVM;
-        private SimpleContainer _container;
 
-        public ShellViewModel(LoginViewModel loginVM, IEventAggregator events, SalesViewModel salesVM,
-            SimpleContainer container)
+        public ShellViewModel(LoginViewModel loginVM, IEventAggregator events, SalesViewModel salesVM)
         {
             _events = events;
             _events.Subscribe(this);
 
             _loginVM = loginVM;
             _salesVM = salesVM;
-            _container = container;
             ActivateItem(loginVM);
         }
 
         public void Handle(LogOnEvent message)
         {
             ActivateItem(_salesVM);
-            _loginVM = _container.GetInstance<LoginViewModel>();
+            _loginVM = IoC.Get<LoginViewModel>();
         }
     }
 }
